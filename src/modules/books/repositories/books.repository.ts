@@ -63,4 +63,54 @@ export class BooksRepository implements IBooksRepository {
     const result = await this.repository.delete(id);
     return (result.affected ?? 0) > 0;
   }
+
+  async findByCategory(
+    categoryName: string,
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Book[], number]> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'created_at',
+      sortOrder = 'DESC',
+    } = paginationQuery;
+
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .where('category.name = :categoryName', { categoryName })
+      .skip(skip)
+      .take(limit)
+      .orderBy(`book.${sortBy}`, sortOrder)
+      .getManyAndCount();
+
+    return [data, total];
+  }
+
+  async findLowStock(
+    threshold: number,
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Book[], number]> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'stock_quantity',
+      sortOrder = 'ASC',
+    } = paginationQuery;
+
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.repository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .where('book.stock_quantity <= :threshold', { threshold })
+      .skip(skip)
+      .take(limit)
+      .orderBy(`book.${sortBy}`, sortOrder)
+      .getManyAndCount();
+
+    return [data, total];
+  }
 }

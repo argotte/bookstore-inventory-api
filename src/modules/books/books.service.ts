@@ -3,6 +3,8 @@ import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { CalculatePriceDto } from './dto/calculate-price.dto';
+import { SearchByCategoryDto } from './dto/search-by-category.dto';
+import { LowStockQueryDto } from './dto/low-stock-query.dto';
 import {
   IBooksService,
   IBooksRepository,
@@ -10,6 +12,7 @@ import {
 } from './interfaces';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
 import { IExchangeRatesService } from '../exchange-rates/interfaces';
+import { ICategoriesService } from '../categories/interfaces';
 
 /**
  * Implementation of IBooksService
@@ -22,9 +25,13 @@ export class BooksService implements IBooksService {
     private readonly booksRepository: IBooksRepository,
     @Inject('IExchangeRatesService')
     private readonly exchangeRatesService: IExchangeRatesService,
+    @Inject('ICategoriesService')
+    private readonly categoriesService: ICategoriesService,
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
+    // Validate that category exists
+    await this.categoriesService.findOne(createBookDto.category_id);
     return await this.booksRepository.create(createBookDto);
   }
 
@@ -49,6 +56,11 @@ export class BooksService implements IBooksService {
   }
 
   async update(id: number, updateBookDto: UpdateBookDto): Promise<Book> {
+    // Validate that category exists if being updated
+    if (updateBookDto.category_id) {
+      await this.categoriesService.findOne(updateBookDto.category_id);
+    }
+
     const book = await this.booksRepository.update(id, updateBookDto);
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`);
@@ -91,5 +103,37 @@ export class BooksService implements IBooksService {
       suggestedPrice: Math.round(suggestedPrice * 100) / 100, // Round to 2 decimals
       calculatedAt: new Date(),
     };
+  }
+
+  async findByCategory(
+    searchDto: SearchByCategoryDto,
+  ): Promise<PaginatedResponseDto<Book>> {
+    const { category, page = 1, limit = 10, sortBy, sortOrder } = searchDto;
+    const [data, total] = await this.booksRepository.findByCategory(category, {
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    });
+    return new PaginatedResponseDto<Book>(data, total, page, limit);
+  }
+
+  async findLowStock(
+    queryDto: LowStockQueryDto,
+  ): Promise<PaginatedResponseDto<Book>> {
+    const {
+      threshold = 10,
+      page = 1,
+      limit = 10,
+      sortBy,
+      sortOrder,
+    } = queryDto;
+    const [data, total] = await this.booksRepository.findLowStock(threshold, {
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    });
+    return new PaginatedResponseDto<Book>(data, total, page, limit);
   }
 }

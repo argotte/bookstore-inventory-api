@@ -76,14 +76,13 @@ export class CreateBookDto {
   stock_quantity: number;
 
   @ApiProperty({
-    description: 'Categoría del libro',
-    example: 'Literatura Clásica',
-    maxLength: 100,
+    description: 'ID de la categoría',
+    example: 1,
+    minimum: 1,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
-  category: string;
+  @IsInt()
+  @Min(1, { message: 'category_id debe ser un ID válido' })
+  category_id: number;
 
   @ApiProperty({
     description: 'Código ISO del país del proveedor (2 letras)',

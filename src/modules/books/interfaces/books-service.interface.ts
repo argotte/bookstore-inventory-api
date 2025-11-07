@@ -1,6 +1,8 @@
 import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
 import { CalculatePriceDto } from '../dto/calculate-price.dto';
+import { SearchByCategoryDto } from '../dto/search-by-category.dto';
+import { LowStockQueryDto } from '../dto/low-stock-query.dto';
 import { Book } from '../entities/book.entity';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../../common/dto';
 
@@ -62,4 +64,16 @@ export interface IBooksService {
     id: number,
     calculatePriceDto: CalculatePriceDto,
   ): Promise<CalculatePriceResponse>;
+
+  /**
+   * Find books by category name with pagination
+   */
+  findByCategory(
+    searchDto: SearchByCategoryDto,
+  ): Promise<PaginatedResponseDto<Book>>;
+
+  /**
+   * Find books with stock below threshold with pagination
+   */
+  findLowStock(queryDto: LowStockQueryDto): Promise<PaginatedResponseDto<Book>>;
 }

@@ -6,9 +6,14 @@ import { Book } from './entities/book.entity';
 import { BooksRepository } from './repositories/books.repository';
 import { IsbnUniqueConstraint } from '../../common/validators/isbn-unique.validator';
 import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book]), ExchangeRatesModule],
+  imports: [
+    TypeOrmModule.forFeature([Book]),
+    ExchangeRatesModule,
+    CategoriesModule,
+  ],
   controllers: [BooksController],
   providers: [
     {

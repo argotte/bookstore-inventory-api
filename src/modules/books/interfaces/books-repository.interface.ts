@@ -36,4 +36,22 @@ export interface IBooksRepository {
    * @returns true if deleted, false if not found
    */
   delete(id: number): Promise<boolean>;
+
+  /**
+   * Find books by category name with pagination
+   * @returns Tuple of [books, total count]
+   */
+  findByCategory(
+    categoryName: string,
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Book[], number]>;
+
+  /**
+   * Find books with stock below threshold with pagination
+   * @returns Tuple of [books, total count]
+   */
+  findLowStock(
+    threshold: number,
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Book[], number]>;
 }
