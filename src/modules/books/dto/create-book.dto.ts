@@ -10,6 +10,7 @@ import {
   Length,
   IsInt,
 } from 'class-validator';
+import { IsIsbnUnique } from '../../../common/validators/isbn-unique.validator';
 
 export class CreateBookDto {
   @ApiProperty({
@@ -42,15 +43,16 @@ export class CreateBookDto {
   @Matches(/^(?:\d{9}[\dX]|\d{3}-\d{1,5}-\d{1,7}-\d{1,7}-[\dX])$/, {
     message: 'ISBN debe tener un formato válido (10 o 13 dígitos)',
   })
+  @IsIsbnUnique()
   isbn: string;
 
   @ApiProperty({
     description: 'Costo del libro en USD',
     example: 15.99,
-    minimum: 0,
+    minimum: 0.01,
   })
   @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
+  @Min(0.01, { message: 'cost_usd debe ser mayor a 0' })
   cost_usd: number;
 
   @ApiProperty({
