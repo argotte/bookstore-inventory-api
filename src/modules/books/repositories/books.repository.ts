@@ -5,6 +5,7 @@ import { Book } from '../entities/book.entity';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
 import { IBooksRepository } from '../interfaces';
+import { PaginationQueryDto } from '../../../common/dto';
 
 /**
  * Implementation of IBooksRepository using TypeORM
@@ -21,10 +22,27 @@ export class BooksRepository implements IBooksRepository {
     return await this.repository.save(book);
   }
 
-  async findAll(): Promise<Book[]> {
-    return await this.repository.find({
-      order: { created_at: 'DESC' },
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Book[], number]> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'created_at',
+      sortOrder = 'DESC',
+    } = paginationQuery;
+
+    // Calculate skip value for offset pagination
+    const skip = (page - 1) * limit;
+
+    // Execute query with pagination and sorting
+    const [data, total] = await this.repository.findAndCount({
+      skip,
+      take: limit,
+      order: { [sortBy]: sortOrder },
     });
+
+    return [data, total];
   }
 
   async findById(id: number): Promise<Book | null> {

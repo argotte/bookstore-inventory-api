@@ -3,6 +3,7 @@ import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { IBooksService, IBooksRepository } from './interfaces';
+import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
 
 /**
  * Implementation of IBooksService
@@ -19,8 +20,16 @@ export class BooksService implements IBooksService {
     return await this.booksRepository.create(createBookDto);
   }
 
-  async findAll(): Promise<Book[]> {
-    return await this.booksRepository.findAll();
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Book>> {
+    const [data, total] = await this.booksRepository.findAll(paginationQuery);
+    return new PaginatedResponseDto<Book>(
+      data,
+      total,
+      paginationQuery.page ?? 1,
+      paginationQuery.limit ?? 10,
+    );
   }
 
   async findOne(id: number): Promise<Book> {

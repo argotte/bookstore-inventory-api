@@ -1,6 +1,7 @@
 import { Book } from '../entities/book.entity';
 import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
+import { PaginationQueryDto } from '../../../common/dto';
 
 /**
  * Interface for Books Repository
@@ -13,9 +14,10 @@ export interface IBooksRepository {
   create(createBookDto: CreateBookDto): Promise<Book>;
 
   /**
-   * Find all books
+   * Find all books with pagination
+   * @returns Tuple of [books, total count]
    */
-  findAll(): Promise<Book[]>;
+  findAll(paginationQuery: PaginationQueryDto): Promise<[Book[], number]>;
 
   /**
    * Find a book by ID

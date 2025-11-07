@@ -8,12 +8,14 @@
   Put,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
+import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -34,14 +36,16 @@ export class BooksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos los libros' })
+  @ApiOperation({ summary: 'Listar todos los libros con paginación' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de todos los libros',
-    type: [Book],
+    description: 'Lista paginada de libros',
+    type: PaginatedResponseDto<Book>,
   })
-  async findAll(): Promise<Book[]> {
-    return await this.booksService.findAll();
+  async findAll(
+    @Query() paginationQuery: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Book>> {
+    return await this.booksService.findAll(paginationQuery);
   }
 
   @Get(':id')
