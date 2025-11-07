@@ -49,8 +49,33 @@ docker-compose up -d
 docker-compose down
 ```
 
+## Poblar la Base de Datos (Seeder)
+
+Si la base de datos está vacía, puedes poblarla con datos de prueba ejecutando:
+
+```bash
+curl -X POST http://localhost:3000/seeder
+```
+
+O usando PowerShell:
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/seeder" -Method POST
+```
+
+Esto creará automáticamente:
+
+- **7 categorías** (Programming, Science Fiction, Business, Self-Help, Technology, History, Philosophy)
+- **30 libros** distribuidos en todas las categorías
+
+El seeder es **seguro para ejecutar múltiples veces**. Detecta duplicados automáticamente:
+
+- Categorías: verifica por nombre
+- Libros: verifica por ISBN
+
 ## Endpoints Principales
 
+- `POST /seeder` - Poblar base de datos con datos de prueba
 - `GET /books` - Listar libros (con paginación)
 - `POST /books` - Crear libro
 - `GET /books/:id` - Obtener libro por ID
@@ -61,6 +86,7 @@ docker-compose down
 - `POST /books/:id/calculate-price` - Calcular precio sugerido
 
 Para ver todos los endpoints disponibles, visita la documentación en http://localhost:3000/api
+
 ### Nota
 
 Aunque la colección de Postman es útil para probar los endpoints, recomiendo usar **Swagger** para explorar y probar la API de manera más interactiva. Swagger está disponible en: [http://localhost:3000/api](http://localhost:3000/api).
@@ -77,6 +103,10 @@ El proyecto incluye una colección de Postman con todas las peticiones a los end
 4. La colección usa la variable `{{base_url}}` configurada en `http://localhost:3000`
 
 ### Contenido de la colección
+
+**Seeder (1 endpoint):**
+
+- Seed Database (poblar BD con datos de prueba)
 
 **Books (8 endpoints):**
 
@@ -98,7 +128,6 @@ El proyecto incluye una colección de Postman con todas las peticiones a los end
 - Delete Category
 
 Todas las peticiones incluyen ejemplos de body, parámetros documentados y valores de ejemplo.
-
 
 ## Comandos Útiles
 

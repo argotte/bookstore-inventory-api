@@ -7,6 +7,7 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { BooksModule } from './modules/books/books.module';
 import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { SeederModule } from './modules/seeder/seeder.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     CategoriesModule,
     ExchangeRatesModule,
     BooksModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],

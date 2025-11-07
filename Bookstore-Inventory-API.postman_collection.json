@@ -336,6 +336,26 @@
         }
       ],
       "description": "Endpoints para gestión de categorías"
+    },
+    {
+      "name": "Seeder",
+      "item": [
+        {
+          "name": "Seed Database",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/seeder",
+              "host": ["{{base_url}}"],
+              "path": ["seeder"]
+            },
+            "description": "Poblar la base de datos con datos iniciales (7 categorías y 30 libros). Detecta duplicados y solo crea los elementos que no existen. Seguro para ejecutar múltiples veces."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoint para poblar la base de datos con datos de prueba"
     }
   ],
   "event": [
