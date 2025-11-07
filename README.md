@@ -4,74 +4,21 @@ API REST con NestJS, Docker y PostgreSQL para gestión de inventario de librerí
 
 ## Requisitos
 
-- Docker Desktop
-- VSCode con extensión "Dev Containers" (recomendado)
+- **Windows/Mac:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- **Linux:** [Docker Engine](https://docs.docker.com/engine/install/) y [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Inicio Rápido
+## Cómo ejecutar el proyecto
 
-### Opción 1: Con Dev Containers (Recomendado)
-
-1. Abrir el proyecto en VSCode
-2. Presionar `F1` y seleccionar: **"Dev Containers: Reopen in Container"**
-3. Esperar a que se construya el contenedor
-4. ¡Listo! Trabajas directamente dentro del contenedor
-
-**Ventajas:**
-
-- IntelliSense completo
-- Un solo `node_modules`
-- Terminal integrada ejecuta en el contenedor
-- Instalas dependencias una sola vez: `npm install <paquete>`
-
-### Opción 2: Sin Dev Containers
+### 1. Clonar el repositorio
 
 ```bash
-# Clonar
 git clone <url-del-repositorio>
 cd bookstore-inventory-api
-
-# Levantar
-docker-compose up -d
 ```
 
-API disponible en `http://localhost:3000`
-Swagger en `http://localhost:3000/api`
+### 2. Crear archivo `.env`
 
-## Comandos Docker
-
-```bash
-# Levantar servicios
-docker-compose up -d
-
-# Ver logs
-docker-compose logs -f
-
-# Detener
-docker-compose down
-
-# Reconstruir
-docker-compose up -d --build
-```
-
-## Comandos en Contenedor
-
-```bash
-# Terminal
-docker-compose exec app sh
-
-# Tests
-docker-compose exec app npm run test
-
-# Lint
-docker-compose exec app npm run lint
-
-# PostgreSQL
-docker-compose exec postgres psql -U postgres -d bookstore
-```
-
-## Variables de Entorno
-
-Archivo `.env`:
+Crear un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
 NODE_ENV=development
@@ -85,8 +32,53 @@ DB_SYNCHRONIZE=true
 DB_LOGGING=true
 ```
 
-`DB_HOST` debe ser `postgres` (nombre del servicio en docker-compose)
+### 3. Levantar los servicios
 
-## Licencia
+```bash
+docker-compose up -d
+```
 
-MIT
+### 4. ¡Listo!
+
+- **API:** http://localhost:3000
+- **Documentación (Swagger):** http://localhost:3000/api
+
+## Detener el proyecto
+
+```bash
+docker-compose down
+```
+
+## Endpoints Principales
+
+- `GET /books` - Listar libros (con paginación)
+- `POST /books` - Crear libro
+- `GET /books/:id` - Obtener libro por ID
+- `PUT /books/:id` - Actualizar libro
+- `DELETE /books/:id` - Eliminar libro
+- `GET /books/search?category=Programming` - Buscar por categoría
+- `GET /books/low-stock?threshold=10` - Libros con stock bajo
+- `POST /books/:id/calculate-price` - Calcular precio sugerido
+
+Para ver todos los endpoints disponibles, visita la documentación en http://localhost:3000/api
+
+## Comandos Útiles
+
+```bash
+# Ver logs en tiempo real
+docker-compose logs -f app
+
+# Reiniciar la aplicación
+docker-compose restart app
+
+# Reconstruir contenedores (después de cambios en Dockerfile)
+docker-compose up -d --build
+```
+
+## Tecnologías
+
+- **NestJS** - Framework backend
+- **TypeORM** - ORM para PostgreSQL
+- **PostgreSQL** - Base de datos
+- **Docker** - Contenedorización
+- **Swagger** - Documentación API

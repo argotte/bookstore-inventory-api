@@ -1,4 +1,10 @@
-import { Repository, FindOptionsWhere, ObjectLiteral } from 'typeorm';
+import {
+  Repository,
+  FindOptionsWhere,
+  ObjectLiteral,
+  FindOptionsOrder,
+  DeepPartial,
+} from 'typeorm';
 import { PaginationQueryDto } from '../dto';
 
 /**
@@ -26,12 +32,14 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
     const skip = (page - 1) * limit;
 
     // Build order object only if sortBy is provided
-    const order = sortBy ? { [sortBy]: sortOrder } : {};
+    const order: FindOptionsOrder<T> = sortBy
+      ? ({ [sortBy]: sortOrder } as FindOptionsOrder<T>)
+      : {};
 
     return await this.repository.findAndCount({
       skip,
       take: limit,
-      order: order as any,
+      order,
     });
   }
 
@@ -70,7 +78,7 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
    * @param data - Entity data
    * @returns Entity instance
    */
-  protected createEntity(data: Partial<T>): T {
-    return this.repository.create(data as any) as unknown as T;
+  protected createEntity(data: DeepPartial<T>): T {
+    return this.repository.create(data);
   }
 }
