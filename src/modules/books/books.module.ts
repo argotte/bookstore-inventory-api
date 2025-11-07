@@ -5,18 +5,22 @@ import { BooksService } from './books.service';
 import { Book } from './entities/book.entity';
 import { BooksRepository } from './repositories/books.repository';
 import { IsbnUniqueConstraint } from '../../common/validators/isbn-unique.validator';
+import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book])],
+  imports: [TypeOrmModule.forFeature([Book]), ExchangeRatesModule],
   controllers: [BooksController],
   providers: [
-    BooksService,
+    {
+      provide: 'IBooksService',
+      useClass: BooksService,
+    },
     {
       provide: 'IBooksRepository',
       useClass: BooksRepository,
     },
     IsbnUniqueConstraint,
   ],
-  exports: [BooksService],
+  exports: ['IBooksService'],
 })
 export class BooksModule {}

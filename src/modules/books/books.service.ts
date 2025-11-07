@@ -2,8 +2,14 @@
 import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { IBooksService, IBooksRepository } from './interfaces';
+import { CalculatePriceDto } from './dto/calculate-price.dto';
+import {
+  IBooksService,
+  IBooksRepository,
+  CalculatePriceResponse,
+} from './interfaces';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
+import { IExchangeRatesService } from '../exchange-rates/interfaces';
 
 /**
  * Implementation of IBooksService
@@ -14,6 +20,8 @@ export class BooksService implements IBooksService {
   constructor(
     @Inject('IBooksRepository')
     private readonly booksRepository: IBooksRepository,
+    @Inject('IExchangeRatesService')
+    private readonly exchangeRatesService: IExchangeRatesService,
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
@@ -53,5 +61,35 @@ export class BooksService implements IBooksService {
     if (!deleted) {
       throw new NotFoundException(`Book with ID ${id} not found`);
     }
+  }
+
+  async calculatePrice(
+    id: number,
+    calculatePriceDto: CalculatePriceDto,
+  ): Promise<CalculatePriceResponse> {
+    // Find the book
+    const book = await this.findOne(id);
+
+    // Get exchange rate from external API
+    const exchangeRate = await this.exchangeRatesService.getExchangeRate(
+      calculatePriceDto.targetCurrency,
+    );
+
+    // Calculate suggested price
+    // Formula: (cost_usd * exchange_rate) * (1 + profit_margin/100)
+    const profitMargin = calculatePriceDto.profitMargin ?? 30;
+    const basePriceInTargetCurrency = book.cost_usd * exchangeRate;
+    const suggestedPrice = basePriceInTargetCurrency * (1 + profitMargin / 100);
+
+    return {
+      bookId: book.id,
+      title: book.title,
+      costUsd: book.cost_usd,
+      targetCurrency: calculatePriceDto.targetCurrency.toUpperCase(),
+      exchangeRate,
+      profitMargin,
+      suggestedPrice: Math.round(suggestedPrice * 100) / 100, // Round to 2 decimals
+      calculatedAt: new Date(),
+    };
   }
 }

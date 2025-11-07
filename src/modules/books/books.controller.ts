@@ -9,18 +9,23 @@
   HttpCode,
   HttpStatus,
   Query,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { CalculatePriceDto } from './dto/calculate-price.dto';
 import { Book } from './entities/book.entity';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
+import { IBooksService, CalculatePriceResponse } from './interfaces';
 
 @ApiTags('books')
 @Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(
+    @Inject('IBooksService')
+    private readonly booksService: IBooksService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo libro' })
@@ -83,5 +88,41 @@ export class BooksController {
   @ApiResponse({ status: 404, description: 'Libro no encontrado' })
   async remove(@Param('id') id: string): Promise<void> {
     return await this.booksService.remove(+id);
+  }
+
+  @Post(':id/calculate-price')
+  @ApiOperation({
+    summary: 'Calcular precio de venta sugerido',
+    description:
+      'Calcula el precio de venta sugerido en la moneda especificada usando tasas de cambio en tiempo real de una API externa',
+  })
+  @ApiBody({ type: CalculatePriceDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Precio calculado exitosamente',
+    schema: {
+      type: 'object',
+      properties: {
+        bookId: { type: 'number', example: 1 },
+        title: { type: 'string', example: 'Clean Code' },
+        costUsd: { type: 'number', example: 45.0 },
+        targetCurrency: { type: 'string', example: 'ARS' },
+        exchangeRate: { type: 'number', example: 1000.0 },
+        profitMargin: { type: 'number', example: 30 },
+        suggestedPrice: { type: 'number', example: 58500.0 },
+        calculatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Libro no encontrado' })
+  @ApiResponse({
+    status: 503,
+    description: 'Servicio de tasas de cambio no disponible',
+  })
+  async calculatePrice(
+    @Param('id') id: string,
+    @Body() calculatePriceDto: CalculatePriceDto,
+  ): Promise<CalculatePriceResponse> {
+    return await this.booksService.calculatePrice(+id, calculatePriceDto);
   }
 }

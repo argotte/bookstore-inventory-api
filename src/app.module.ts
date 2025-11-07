@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmConfig } from './config/typeorm.config';
 import { BooksModule } from './modules/books/books.module';
+import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { BooksModule } from './modules/books/books.module';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot(typeOrmConfig()),
+    ExchangeRatesModule,
     BooksModule,
   ],
   controllers: [AppController],
