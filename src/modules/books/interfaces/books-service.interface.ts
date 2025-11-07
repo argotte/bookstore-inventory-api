@@ -1,0 +1,37 @@
+import { CreateBookDto } from '../dto/create-book.dto';
+import { UpdateBookDto } from '../dto/update-book.dto';
+import { Book } from '../entities/book.entity';
+
+/**
+ * Interface for Books Service
+ * Defines the contract for book business logic operations
+ */
+export interface IBooksService {
+  /**
+   * Create a new book
+   */
+  create(createBookDto: CreateBookDto): Promise<Book>;
+
+  /**
+   * Find all books
+   */
+  findAll(): Promise<Book[]>;
+
+  /**
+   * Find a book by ID
+   * @throws NotFoundException if book doesn't exist
+   */
+  findOne(id: number): Promise<Book>;
+
+  /**
+   * Update a book
+   * @throws NotFoundException if book doesn't exist
+   */
+  update(id: number, updateBookDto: UpdateBookDto): Promise<Book>;
+
+  /**
+   * Remove a book
+   * @throws NotFoundException if book doesn't exist
+   */
+  remove(id: number): Promise<void>;
+}
