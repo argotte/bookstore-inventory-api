@@ -5,40 +5,27 @@ import { Category } from '../entities/category.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
 import { ICategoriesRepository } from '../interfaces';
-import { PaginationQueryDto } from '../../../common/dto';
+import { BaseRepository } from '../../../common/repositories';
 
+/**
+ * Implementation of ICategoriesRepository using TypeORM
+ * Extends BaseRepository for common CRUD operations
+ */
 @Injectable()
-export class CategoriesRepository implements ICategoriesRepository {
+export class CategoriesRepository
+  extends BaseRepository<Category>
+  implements ICategoriesRepository
+{
   constructor(
     @InjectRepository(Category)
-    private readonly repository: Repository<Category>,
-  ) {}
+    protected readonly repository: Repository<Category>,
+  ) {
+    super(repository);
+  }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const category = this.repository.create(createCategoryDto);
-    return await this.repository.save(category);
-  }
-
-  async findAll(
-    paginationQuery: PaginationQueryDto,
-  ): Promise<[Category[], number]> {
-    const {
-      page = 1,
-      limit = 10,
-      sortBy = 'name',
-      sortOrder = 'ASC',
-    } = paginationQuery;
-    const skip = (page - 1) * limit;
-
-    return await this.repository.findAndCount({
-      order: { [sortBy]: sortOrder },
-      skip,
-      take: limit,
-    });
-  }
-
-  async findById(id: number): Promise<Category | null> {
-    return await this.repository.findOne({ where: { id } });
+    const category = super.createEntity(createCategoryDto);
+    return await super.save(category);
   }
 
   async findByName(name: string): Promise<Category | null> {
@@ -51,10 +38,5 @@ export class CategoriesRepository implements ICategoriesRepository {
   ): Promise<Category | null> {
     await this.repository.update(id, updateCategoryDto);
     return await this.findById(id);
-  }
-
-  async delete(id: number): Promise<boolean> {
-    const result = await this.repository.delete(id);
-    return (result.affected ?? 0) > 0;
   }
 }

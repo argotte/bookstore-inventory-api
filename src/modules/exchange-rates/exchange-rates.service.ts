@@ -8,6 +8,11 @@ import {
   ExchangeRateData,
   IExchangeRatesService,
 } from './interfaces';
+import {
+  EXCHANGE_RATE_API_URL,
+  CACHE_DURATION_MS,
+  FALLBACK_EXCHANGE_RATES,
+} from '../../common/constants';
 
 /**
  * Service to fetch and cache exchange rates from external API
@@ -16,26 +21,12 @@ import {
 @Injectable()
 export class ExchangeRatesService implements IExchangeRatesService {
   private readonly logger = new Logger(ExchangeRatesService.name);
-  private readonly API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
-  private readonly CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+  private readonly API_URL = EXCHANGE_RATE_API_URL;
+  private readonly CACHE_DURATION_MS = CACHE_DURATION_MS;
+  private readonly FALLBACK_RATES = FALLBACK_EXCHANGE_RATES;
 
   private cachedData: ExchangeRateData | null = null;
   private lastFetchTime: Date | null = null;
-
-  /**
-   * Fallback exchange rates in case external API is unavailable
-   */
-  private readonly FALLBACK_RATES: Record<string, number> = {
-    USD: 1,
-    EUR: 0.85,
-    GBP: 0.73,
-    JPY: 110.0,
-    ARS: 1000.0, // Argentine Peso
-    MXN: 20.0, // Mexican Peso
-    BRL: 5.3, // Brazilian Real
-    CLP: 900.0, // Chilean Peso
-    COP: 4000.0, // Colombian Peso
-  };
 
   /**
    * Get exchange rate for specific currency

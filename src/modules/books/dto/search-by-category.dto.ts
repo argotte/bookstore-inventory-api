@@ -6,9 +6,10 @@ import {
   IsInt,
   Min,
   Max,
-  IsIn,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { BookSortFields, SortOrder } from '../../../common/enums';
 
 export class SearchByCategoryDto {
   @ApiProperty({
@@ -48,21 +49,21 @@ export class SearchByCategoryDto {
 
   @ApiPropertyOptional({
     description: 'Field to sort by',
-    default: 'created_at',
-    example: 'created_at',
+    enum: BookSortFields,
+    default: BookSortFields.CREATED_AT,
+    example: BookSortFields.TITLE,
   })
   @IsOptional()
-  @IsString()
-  sortBy?: string = 'created_at';
+  @IsEnum(BookSortFields)
+  sortBy?: BookSortFields = BookSortFields.CREATED_AT;
 
   @ApiPropertyOptional({
     description: 'Sort order',
-    enum: ['ASC', 'DESC'],
-    default: 'DESC',
-    example: 'DESC',
+    enum: SortOrder,
+    default: SortOrder.DESC,
+    example: SortOrder.DESC,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder = SortOrder.DESC;
 }

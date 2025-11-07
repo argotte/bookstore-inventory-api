@@ -14,9 +14,10 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoryPaginationQueryDto } from './dto/category-pagination-query.dto';
 import { Category } from './entities/category.entity';
 import { ICategoriesService } from './interfaces';
-import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
+import { PaginatedResponseDto } from '../../common/dto';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -50,7 +51,7 @@ export class CategoriesController {
     type: PaginatedResponseDto<Category>,
   })
   async findAll(
-    @Query() paginationQuery: PaginationQueryDto,
+    @Query() paginationQuery: CategoryPaginationQueryDto,
   ): Promise<PaginatedResponseDto<Category>> {
     return await this.categoriesService.findAll(paginationQuery);
   }

@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
+import { BookSortFields, SortOrder } from '../../../common/enums';
 
 export class LowStockQueryDto {
   @ApiPropertyOptional({
@@ -43,21 +44,21 @@ export class LowStockQueryDto {
 
   @ApiPropertyOptional({
     description: 'Field to sort by',
-    default: 'created_at',
-    example: 'created_at',
+    enum: BookSortFields,
+    default: BookSortFields.STOCK_QUANTITY,
+    example: BookSortFields.STOCK_QUANTITY,
   })
   @IsOptional()
-  @IsString()
-  sortBy?: string = 'created_at';
+  @IsEnum(BookSortFields)
+  sortBy?: BookSortFields = BookSortFields.STOCK_QUANTITY;
 
   @ApiPropertyOptional({
     description: 'Sort order',
-    enum: ['ASC', 'DESC'],
-    default: 'DESC',
-    example: 'DESC',
+    enum: SortOrder,
+    default: SortOrder.ASC,
+    example: SortOrder.ASC,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder = SortOrder.ASC;
 }

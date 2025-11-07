@@ -17,8 +17,9 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { CalculatePriceDto } from './dto/calculate-price.dto';
 import { SearchByCategoryDto } from './dto/search-by-category.dto';
 import { LowStockQueryDto } from './dto/low-stock-query.dto';
+import { BookPaginationQueryDto } from './dto/book-pagination-query.dto';
 import { Book } from './entities/book.entity';
-import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
+import { PaginatedResponseDto } from '../../common/dto';
 import { IBooksService, CalculatePriceResponse } from './interfaces';
 
 @ApiTags('books')
@@ -50,7 +51,7 @@ export class BooksController {
     type: PaginatedResponseDto<Book>,
   })
   async findAll(
-    @Query() paginationQuery: PaginationQueryDto,
+    @Query() paginationQuery: BookPaginationQueryDto,
   ): Promise<PaginatedResponseDto<Book>> {
     return await this.booksService.findAll(paginationQuery);
   }

@@ -6,47 +6,27 @@ import { CreateBookDto } from '../dto/create-book.dto';
 import { UpdateBookDto } from '../dto/update-book.dto';
 import { IBooksRepository } from '../interfaces';
 import { PaginationQueryDto } from '../../../common/dto';
+import { BaseRepository } from '../../../common/repositories';
 
 /**
  * Implementation of IBooksRepository using TypeORM
+ * Extends BaseRepository for common CRUD operations
  */
 @Injectable()
-export class BooksRepository implements IBooksRepository {
+export class BooksRepository
+  extends BaseRepository<Book>
+  implements IBooksRepository
+{
   constructor(
     @InjectRepository(Book)
-    private readonly repository: Repository<Book>,
-  ) {}
+    protected readonly repository: Repository<Book>,
+  ) {
+    super(repository);
+  }
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
-    const book = this.repository.create(createBookDto);
-    return await this.repository.save(book);
-  }
-
-  async findAll(
-    paginationQuery: PaginationQueryDto,
-  ): Promise<[Book[], number]> {
-    const {
-      page = 1,
-      limit = 10,
-      sortBy = 'created_at',
-      sortOrder = 'DESC',
-    } = paginationQuery;
-
-    // Calculate skip value for offset pagination
-    const skip = (page - 1) * limit;
-
-    // Execute query with pagination and sorting
-    const [data, total] = await this.repository.findAndCount({
-      skip,
-      take: limit,
-      order: { [sortBy]: sortOrder },
-    });
-
-    return [data, total];
-  }
-
-  async findById(id: number): Promise<Book | null> {
-    return await this.repository.findOneBy({ id });
+    const book = super.createEntity(createBookDto);
+    return await super.save(book);
   }
 
   async update(id: number, updateBookDto: UpdateBookDto): Promise<Book | null> {
@@ -56,12 +36,7 @@ export class BooksRepository implements IBooksRepository {
     }
 
     Object.assign(book, updateBookDto);
-    return await this.repository.save(book);
-  }
-
-  async delete(id: number): Promise<boolean> {
-    const result = await this.repository.delete(id);
-    return (result.affected ?? 0) > 0;
+    return await super.save(book);
   }
 
   async findByCategory(

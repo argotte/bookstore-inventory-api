@@ -1,6 +1,7 @@
-import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsString, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { SortOrder } from '../enums';
 
 /**
  * DTO for pagination query parameters
@@ -44,11 +45,11 @@ export class PaginationQueryDto {
 
   @ApiPropertyOptional({
     description: 'Sort order',
-    enum: ['ASC', 'DESC'],
+    enum: SortOrder,
     default: 'DESC',
     example: 'DESC',
   })
   @IsOptional()
-  @IsIn(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder = SortOrder.DESC;
 }
