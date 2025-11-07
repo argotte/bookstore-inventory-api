@@ -8,6 +8,7 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategoriesService, ICategoriesRepository } from './interfaces';
+import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
 
 @Injectable()
 export class CategoriesService implements ICategoriesService {
@@ -30,8 +31,17 @@ export class CategoriesService implements ICategoriesService {
     return await this.categoriesRepository.create(createCategoryDto);
   }
 
-  async findAll(): Promise<Category[]> {
-    return await this.categoriesRepository.findAll();
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Category>> {
+    const [data, total] =
+      await this.categoriesRepository.findAll(paginationQuery);
+    return new PaginatedResponseDto<Category>(
+      data,
+      total,
+      paginationQuery.page ?? 1,
+      paginationQuery.limit ?? 10,
+    );
   }
 
   async findOne(id: number): Promise<Category> {

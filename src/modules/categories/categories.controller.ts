@@ -9,12 +9,14 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { ICategoriesService } from './interfaces';
+import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -41,14 +43,16 @@ export class CategoriesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todas las categorías' })
+  @ApiOperation({ summary: 'Listar todas las categorías con paginación' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de categorías',
-    type: [Category],
+    description: 'Lista paginada de categorías',
+    type: PaginatedResponseDto<Category>,
   })
-  async findAll(): Promise<Category[]> {
-    return await this.categoriesService.findAll();
+  async findAll(
+    @Query() paginationQuery: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Category>> {
+    return await this.categoriesService.findAll(paginationQuery);
   }
 
   @Get(':id')

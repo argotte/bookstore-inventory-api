@@ -5,6 +5,7 @@ import { Category } from '../entities/category.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
 import { ICategoriesRepository } from '../interfaces';
+import { PaginationQueryDto } from '../../../common/dto';
 
 @Injectable()
 export class CategoriesRepository implements ICategoriesRepository {
@@ -18,9 +19,21 @@ export class CategoriesRepository implements ICategoriesRepository {
     return await this.repository.save(category);
   }
 
-  async findAll(): Promise<Category[]> {
-    return await this.repository.find({
-      order: { name: 'ASC' },
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+  ): Promise<[Category[], number]> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'name',
+      sortOrder = 'ASC',
+    } = paginationQuery;
+    const skip = (page - 1) * limit;
+
+    return await this.repository.findAndCount({
+      order: { [sortBy]: sortOrder },
+      skip,
+      take: limit,
     });
   }
 
