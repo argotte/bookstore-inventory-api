@@ -61,6 +61,44 @@ docker-compose down
 - `POST /books/:id/calculate-price` - Calcular precio sugerido
 
 Para ver todos los endpoints disponibles, visita la documentación en http://localhost:3000/api
+### Nota
+
+Aunque la colección de Postman es útil para probar los endpoints, recomiendo usar **Swagger** para explorar y probar la API de manera más interactiva. Swagger está disponible en: [http://localhost:3000/api](http://localhost:3000/api).
+
+## Colección de Postman
+
+El proyecto incluye una colección de Postman con todas las peticiones a los endpoints implementados:
+
+### Importar la colección
+
+1. Abre **Postman**
+2. Click en **"Import"**
+3. Selecciona el archivo `Bookstore-Inventory-API.postman_collection.json`
+4. La colección usa la variable `{{base_url}}` configurada en `http://localhost:3000`
+
+### Contenido de la colección
+
+**Books (8 endpoints):**
+
+- Create Book
+- Get All Books
+- Get Book by ID
+- Update Book
+- Delete Book
+- Search by Category
+- Low Stock Books
+- Calculate Suggested Price
+
+**Categories (5 endpoints):**
+
+- Create Category
+- Get All Categories
+- Get Category by ID
+- Update Category
+- Delete Category
+
+Todas las peticiones incluyen ejemplos de body, parámetros documentados y valores de ejemplo.
+
 
 ## Comandos Útiles
 

@@ -1,0 +1,364 @@
+{
+  "info": {
+    "name": "Bookstore Inventory API",
+    "description": "Colección completa de endpoints para la API de gestión de inventario de librería",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "bookstore-api"
+  },
+  "item": [
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Clean Code\",\n  \"author\": \"Robert C. Martin\",\n  \"isbn\": \"978-0-13-235088-4\",\n  \"cost_usd\": 42.99,\n  \"stock_quantity\": 25,\n  \"category_id\": 1,\n  \"supplier_country\": \"US\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books",
+              "host": ["{{base_url}}"],
+              "path": ["books"]
+            },
+            "description": "Crear un nuevo libro en el inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Books (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books?page=1&limit=10&sortBy=created_at&sortOrder=DESC",
+              "host": ["{{base_url}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página (1-based)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Cantidad de items por página (max: 100)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "created_at",
+                  "description": "Campo para ordenar (id, title, author, cost_usd, stock_quantity, created_at, updated_at)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "DESC",
+                  "description": "Orden (ASC o DESC)"
+                }
+              ]
+            },
+            "description": "Listar todos los libros con paginación"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["books", "1"]
+            },
+            "description": "Obtener un libro específico por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Clean Code - Updated Edition\",\n  \"stock_quantity\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["books", "1"]
+            },
+            "description": "Actualizar información de un libro existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["books", "1"]
+            },
+            "description": "Eliminar un libro del inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Books by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/search?category=Programming&page=1&limit=10&sortBy=title&sortOrder=ASC",
+              "host": ["{{base_url}}"],
+              "path": ["books", "search"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Programming",
+                  "description": "Nombre de la categoría"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "title",
+                  "description": "Campo para ordenar"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "ASC"
+                }
+              ]
+            },
+            "description": "Buscar libros por nombre de categoría"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Low Stock Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/low-stock?threshold=10&page=1&limit=10&sortBy=stock_quantity&sortOrder=ASC",
+              "host": ["{{base_url}}"],
+              "path": ["books", "low-stock"],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "10",
+                  "description": "Umbral de stock bajo (default: 10)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "stock_quantity",
+                  "description": "Campo para ordenar"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "ASC"
+                }
+              ]
+            },
+            "description": "Obtener libros con stock por debajo del umbral especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "Calculate Suggested Price",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetCurrency\": \"ARS\",\n  \"profitMargin\": 40\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books/1/calculate-price",
+              "host": ["{{base_url}}"],
+              "path": ["books", "1", "calculate-price"]
+            },
+            "description": "Calcular precio de venta sugerido usando tasas de cambio en tiempo real"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gestión de libros"
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Programming\",\n  \"description\": \"Books about programming, software development, and computer science\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            },
+            "description": "Crear una nueva categoría"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Categories (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories?page=1&limit=10&sortBy=name&sortOrder=ASC",
+              "host": ["{{base_url}}"],
+              "path": ["categories"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items por página"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "name",
+                  "description": "Campo para ordenar (id, name, created_at, updated_at)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "ASC",
+                  "description": "Orden (ASC o DESC)"
+                }
+              ]
+            },
+            "description": "Listar todas las categorías con paginación"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "1"]
+            },
+            "description": "Obtener una categoría específica por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Software Development\",\n  \"description\": \"Books about software development and best practices\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "1"]
+            },
+            "description": "Actualizar información de una categoría"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "1"]
+            },
+            "description": "Eliminar una categoría"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gestión de categorías"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
